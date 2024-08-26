@@ -1,0 +1,8 @@
+.body{
+    background: linear-gradient(90deg, rgb(255, 0, 0) 0%, #331fcd 100%);
+    font-style: italic;
+    color: white;
+    text-align: right;
+    padding: 10px;
+    height: auto;
+}

@@ -1,0 +1,44 @@
+<div class="body">
+  <div class="data2024">
+    2024:
+    <mat-button-toggle-group
+      name="ingredients"
+      aria-label="Ingredients"
+      [hideMultipleSelectionIndicator]="hideMultipleSelectionIndicator()"
+      [hideSingleSelectionIndicator]="true"
+      multiple
+      (change)="onToggleChanged2024($event.value)"
+    >
+      <mat-button-toggle value="Data2024" >Data</mat-button-toggle>
+      <mat-button-toggle value="Line2024" >Line</mat-button-toggle>
+    </mat-button-toggle-group>
+  </div>
+  <div class="data2020">
+    2020:
+    <mat-button-toggle-group
+      name="ingredients"
+      aria-label="Ingredients"
+      [hideMultipleSelectionIndicator]="hideMultipleSelectionIndicator()"
+      [hideSingleSelectionIndicator]="true"
+      multiple
+      (change)="onToggleChanged2020($event.value)"
+    >
+      <mat-button-toggle value="Data2020" >Data</mat-button-toggle>
+      <mat-button-toggle value="Line2020">Line</mat-button-toggle>
+    </mat-button-toggle-group>
+  </div>
+  <div class="data2016">
+    2016:
+    <mat-button-toggle-group
+      name="ingredients"
+      aria-label="Ingredients"
+      [hideMultipleSelectionIndicator]="hideMultipleSelectionIndicator()"
+      [hideSingleSelectionIndicator]="true"
+      multiple
+      (change)="onToggleChanged2016($event.value)"
+    >
+      <mat-button-toggle value="Data2016" >Data</mat-button-toggle>
+      <mat-button-toggle value="Line2016">Line</mat-button-toggle>
+    </mat-button-toggle-group>
+  </div>
+</div>

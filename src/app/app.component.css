@@ -1,3 +1,8 @@
+:root {
+    --blue: #4a6ca8;
+    --red: #d24e4e;
+}
+
 .container {
     display: flex;
     flex-direction: row;

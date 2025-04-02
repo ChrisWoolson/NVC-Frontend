@@ -43,6 +43,7 @@ export class GraphComponent implements AfterViewInit {
             this.chart.destroy();  // Prevent memory leaks and multiple bindings
         }
         this.firebaseService.getData('/').then((data: any) => {
+            localStorage.setItem('data', JSON.stringify(data));
             const graphData = data["polldata"]
             const olld2020Data = data["oldPollData2020"]
             const line2024Data = data["line2024Data"]
@@ -158,7 +159,7 @@ export class GraphComponent implements AfterViewInit {
                         }
                     },
                     
-                    responsive: true,
+                    responsive: false,
                     maintainAspectRatio: false,
                     plugins: {
                         legend: {

@@ -16,7 +16,11 @@ export class FirebaseService {
   }
 
   public async getData(path: string): Promise<any> {
-    console.log("Getting data from path: ", path);
+    const localStorageData = localStorage.getItem('data');
+    console.log("localstorage: ", localStorageData);
+    if (JSON.parse(localStorageData as string) != null) {
+      return JSON.parse(localStorageData as string);
+    }
     const dbRef = ref(this.db);
     try {
       const snapshot = await get(child(dbRef, path));

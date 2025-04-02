@@ -12,5 +12,9 @@
 
 canvas {
     width: 100% !important; /* Ensures the canvas fills the host element */
-    height: 100% !important; /* Ensures the canvas fills the host element */
+    height: 100vh !important; /* Ensures the canvas fills the host element */
+}
+
+.body {
+    height: 100%;
 }

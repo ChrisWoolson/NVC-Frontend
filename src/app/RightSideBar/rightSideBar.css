@@ -1,5 +1,35 @@
 .body {
-    background: linear-gradient(to bottom, #ffffff 50%, #2600fe 100%);
-    width: 15vw;
-    height: 75vh;
+  background: #73d9ff;
+  width: 15vw;
+  height: 75vh;
+  display: flex;
+  flex-direction: column;
+
+
+.top {
+  margin-top: 7vh;
+  margin-left: 1vw;
+  margin-bottom: 25vh;
+}
+
+.bottom {
+    margin-left: 1vw;
+    justify-content: flex-end;
+}
+
+}
+
+
+
+.innerBody {
+    background: linear-gradient(to bottom, #0000ff 0% 30%, #fe0000 70% 100%);
+
+    width: 9vw;
+    height: 65%;
+    margin-top: auto;
+    margin-bottom: auto;
+    border-radius: 15px; /* Add this line to create curved edges */
+    margin-left: auto;
+    margin-right: auto;
+    color: white;
 }

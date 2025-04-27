@@ -1,6 +1,6 @@
 // src/app/services/firebase.service.ts
 import { Injectable } from '@angular/core';
-import { getDatabase, ref, get, child } from 'firebase/database';
+import { getDatabase, ref, get, child, onValue } from 'firebase/database';
 import { initializeApp } from 'firebase/app';
 import { firebaseConfig } from '../../environments/environment';
 
@@ -16,11 +16,6 @@ export class FirebaseService {
   }
 
   public async getData(path: string): Promise<any> {
-    const localStorageData = localStorage.getItem('data');
-    console.log("localstorage: ", localStorageData);
-    if (JSON.parse(localStorageData as string) != null) {
-      return JSON.parse(localStorageData as string);
-    }
     const dbRef = ref(this.db);
     try {
       const snapshot = await get(child(dbRef, path));
@@ -35,4 +30,14 @@ export class FirebaseService {
       throw error;
     }
   }
+
+// …
+  public subscribeToData(path: string, callback: (val: any) => void): void {
+    const dbRef = ref(this.db, path);
+    onValue(dbRef, snap => {
+      if (snap.exists()) { 
+        callback(snap.val()); }
+    }, err => console.error(err));
+  }
+
 }

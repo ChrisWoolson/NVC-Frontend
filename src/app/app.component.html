@@ -3,8 +3,7 @@
 
 <div class="container">
     <app-leftsidebar (togglesChanged)="onTogglesChanged($event)"/>
-    <app-graph #graph [toggledOptions]="selectedOptions"/>
-    <app-rightsidebar />
+    <app-graph class="graphContainer" #graph [toggledOptions]="selectedOptions"/>
 </div>
 
 <app-foot />

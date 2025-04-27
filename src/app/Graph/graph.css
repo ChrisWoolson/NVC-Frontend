@@ -1,8 +1,8 @@
 :host {
     display: block;
     
-    width: 70vw; /* Adjust width to viewport width for better responsiveness */
-    height: 70vh; /* Height set as you specified */
+    width: 100%; /* Adjust width to viewport width for better responsiveness */
+    height: 60%; /* Height set as you specified */
     margin: auto; /* Centers the component on the page if needed */
     margin-top: 0%;
     margin-bottom: 0%;
@@ -12,9 +12,10 @@
 
 canvas {
     width: 100% !important; /* Ensures the canvas fills the host element */
-    height: 100vh !important; /* Ensures the canvas fills the host element */
+    height: 50% !important; /* Ensures the canvas fills the host element */
 }
 
 .body {
     height: 100%;
+
 }

@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, ElementRef, ViewChild, AfterViewInit, ChangeDetectorRef, Input, SimpleChange } from '@angular/core';
+import { Component, ChangeDetectionStrategy, ElementRef, ViewChild, AfterViewInit, ChangeDetectorRef, Input, SimpleChange, NgZone } from '@angular/core';
 import { Chart, registerables } from 'chart.js';
 import { FirebaseService } from '../services/firebase';
 import 'chartjs-adapter-date-fns';  // Import it at the top of your file
@@ -29,165 +29,109 @@ export class GraphComponent implements AfterViewInit {
             }
     }
 
-    constructor(private cdr: ChangeDetectorRef, private firebaseService: FirebaseService) {
+    constructor(private cdr: ChangeDetectorRef, private firebaseService: FirebaseService, private ngZone: NgZone) {
         Chart.register(...registerables);
     }
 
+    private updateIntervalId: any;
+
     ngAfterViewInit(): void {
         this.initializeChart();
-        this.cdr.detectChanges();  // Manually trigger detection once
+        this.cdr.detectChanges();
+        this.updateIntervalId = setInterval(() => {
+            if (this.chart) {
+                this.chart.update();
+            }
+        }, 3000);
     }
 
-    private initializeChart(): void {
-        if (this.chart) {
-            this.chart.destroy();  // Prevent memory leaks and multiple bindings
+    ngOnDestroy(): void {
+        if (this.updateIntervalId) {
+            clearInterval(this.updateIntervalId);
         }
-        this.firebaseService.getData('/').then((data: any) => {
-            localStorage.setItem('data', JSON.stringify(data));
-            const graphData = data["polldata"]
-            const olld2020Data = data["oldPollData2020"]
-            const line2024Data = data["line2024Data"]
-            const line2020Data = data["line2020Data"]
-            const formattedData = graphData.map((item: any) => ({
-                x: new Date(Date.UTC(
-                    new Date(item.endDate).getUTCFullYear(),
-                    new Date(item.endDate).getUTCMonth(),
-                    new Date(item.endDate).getUTCDate(),
-                    -17,0,0,0
-                )),
-                y: Number(item.spread),
-                pollster: item.pollster
-            }));
-            const formattedOld2020Data = olld2020Data
-                .filter((item: any) => new Date(item.endDate) <= new Date(new Date().getFullYear() - 4, new Date().getMonth()+1, new Date().getDate()))
-                .map((item: any) => ({
-                    x: new Date(Date.UTC(
-                        new Date(item.endDate).getUTCFullYear() + 4,
-                        new Date(item.endDate).getUTCMonth(),
-                        new Date(item.endDate).getUTCDate(),
-                        -17,0,0,0
-                    )),
-                    y: Number(item.spread),
-                    pollster: item.pollster
-                }));
-            const formattedLine2024Data = line2024Data.map((item: any) => ({
-                x: new Date(Date.UTC(
-                    new Date(item.date).getUTCFullYear(),
-                    new Date(item.date).getUTCMonth(),
-                    new Date(item.date).getUTCDate(),
-                    -17,0,0,0
-                )),
-                y: Number(item.spread)
-            }))
-            .sort((a: any, b: any) => a.x - b.x);
-            const formattedLine2020Data = line2020Data
-                .filter((item: any) => new Date(item.date) <= new Date(new Date().getFullYear() - 4, new Date().getMonth()+1, new Date().getDate()))
-                .map((item: any) => ({
-                    x: new Date(Date.UTC(
-                        new Date(item.date).getUTCFullYear() + 4,
-                        new Date(item.date).getUTCMonth(),
-                        new Date(item.date).getUTCDate(),
-                        -17, 0, 0, 0
-                    )),
-                    y: Number(item.spread)
-                }))
-                .sort((a: any, b: any) => a.x - b.x);
-            console.log(formattedLine2024Data);
-            this.chart = new Chart(this.chartCanvas.nativeElement, {
-                type: 'scatter',
-                data: {
-                    datasets: [{
-                        label: 'Scatter Dataset',
-                        data: formattedData,
-                        backgroundColor: '#55cf6d',
-                        borderColor: '#55cf6d',
-                        hidden: true
-                    },
-                    {
-                        label: 'Old 2020 Data',
-                        data: formattedOld2020Data,
-                        backgroundColor: '#6da3cf',
-                        borderColor: '#6da3cf',
-                        hidden: true
-                    },
-                    {
-                        type: 'line',
-                        label: 'Line2024',
-                        data: formattedLine2024Data,
-                        borderColor: '#086601',
-                        borderWidth: 3,
-                        fill: false,
-                        cubicInterpolationMode: 'monotone',
-                    },
-                    {
-                        type: 'line',
-                        label: 'Line2020',
-                        data: formattedLine2020Data,
-                        borderColor: '#01347a',
-                        borderWidth: 3,
-                        fill: false,
-                        cubicInterpolationMode: 'monotone'
-                    }
-                ]
-                },
-                
-                options: {
-                    scales: {
-                        x: {
-                            type: 'time',
-                            time: {
-                                unit: 'day',
-                                tooltipFormat: 'MM-dd',
-                                displayFormats: {
-                                    day: 'MM-dd'
-                                },
-                                parser: 'yyyy-MM-dd'
-                            },
-                            title: {
-                                display: true,
-                                text: 'Date'
-                            }
-                        },
-                        y: {
-                            max: 12,
-                            min: -8,
-                            title: {
-                            display: true,
-                            text: 'Difference in Polls (%)'
-                            }
-                            
-                        }
-                    },
-                    
-                    responsive: false,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            display: false
-                        },
-                        tooltip: {
-                            filter: function (tooltipItem: any) {
-                                return tooltipItem.datasetIndex < 2;
-                            },
-                            callbacks: {
-                                label: function(context: any){
-                                    var label = "";
-                                    if(context.datasetIndex == 0){
-                                        label += '2024 Poll';
-                                    }
-                                    else if(context.datasetIndex == 1){
-                                        label += '2020 Poll';
-                                    }
-                                    return label;
-                                }
-                            },
-                            
-                        }
-                    },
-                }
-            })
-        }).catch((error: any) => {
-            console.error(error);
-        });
     }
+    private initializeChart(): void {
+        // 1. Destroy any existing chart
+        if (this.chart) {
+          this.chart.destroy();
+        }
+      
+        // 2. Create the Chart.js instance with an empty Sensor0 dataset
+        this.chart = new Chart(this.chartCanvas.nativeElement, {
+          type: 'line',
+          data: {
+            datasets: [
+              {
+            label: 'Sensor 0',
+            data: [],
+            borderColor: '#55cf6d',
+            backgroundColor: '#55cf6d',
+            fill: false,
+            cubicInterpolationMode: 'monotone',
+            animation: {
+                duration: 0,
+            }
+              },
+              // If you still need your static Line2024 dataset, you can seed it here:
+              // {
+              //   label: 'Line2024',
+              //   data: [],          // will fill in later or via a separate subscription
+              //   borderColor: '#086601',
+              //   borderWidth: 3,
+              //   fill: false,
+              // },
+            ]
+          },
+          options: {
+            scales: {
+              x: {
+            type: 'time',
+            time: {
+              unit: 'second',
+              tooltipFormat: 'mm:ss',
+              displayFormats: {
+                second: 'mm:ss'
+              }
+            },
+            title: { display: true, text: 'Date' }
+              },
+              y: {
+            min: 0, max: 12,
+            title: { display: true, text: 'Sensor Value' }
+              }
+            },
+            responsive: false,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: { display: false },
+              tooltip: {
+            callbacks: {
+              label: ctx => `Sensor0: ${ctx.parsed.y}`
+            }
+              }
+            }
+          }
+        });
+      
+        // 3. Stream new data in and animate
+        let lastTimestamp = 0;
+        const MAX_POINTS = 100;
+      
+        this.firebaseService.subscribeToData('/sensors/sensor0/', (rawData: any[]) => {
+
+            const points = rawData.map(item => ({
+                x: new Date(item.date),
+                y: Number(item.value)
+              }));
+            
+              // mutate the existing dataset
+              const sensorDs = this.chart.data.datasets[0];
+              const arr = sensorDs.data as unknown as {x:Date,y:number}[];
+              arr.splice(0, arr.length, ...points);
+            
+              console.log('Updating chart, points =', points.length);
+              this.chart.update('active');
+        });
+      }
+      
 }

@@ -1,12 +1,19 @@
 :root {
-    --blue: #4a6ca8;
-    --red: #d24e4e;
+    --blue: #0d4e27;
+    --red: #54d27e;
 }
 
 .container {
     display: flex;
     flex-direction: row;
+    height: 100%;
 }
+
+.graphContainer {
+    height: 100%;
+}
+
 .body{
     margin: 0px;
+    height: 100%;
 }

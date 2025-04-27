@@ -3,7 +3,6 @@ import { RouterOutlet } from '@angular/router';
 import { HeaderComponent } from './Header/header';
 import { GraphComponent } from './Graph/graph';
 import { FootComponent } from './Foot/foot';
-import { RightSideBar } from "./RightSideBar/rightSideBar";
 import { LeftSideBar } from "./LeftSideBar/leftSideBar";
 
 @Component({
@@ -11,7 +10,7 @@ import { LeftSideBar } from "./LeftSideBar/leftSideBar";
   standalone: true,
   templateUrl: './app.component.html',
   styleUrl: './app.component.css',
-  imports: [HeaderComponent, GraphComponent, FootComponent, RightSideBar, LeftSideBar]
+  imports: [HeaderComponent, GraphComponent, FootComponent, LeftSideBar]
 })
 export class AppComponent {
   title = 'my-app';
